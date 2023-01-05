@@ -23,24 +23,25 @@ export async function knowledgeOwlApiRequest(
 	const options: IHttpRequestOptions = {
 		headers: {},
 		method,
-		body: { data: body },
+		body: body,
 		qs: query,
 		url: uri || `https://app.knowledgeowl.com/api/head${endpoint}`,
 		json: true,
 	};
-	return await this.helpers.requestWithAuthentication.call(this, 'knowledgeOwlBasicAuthApi', options);
+	const res = await this.helpers.requestWithAuthentication.call(this, 'knowledgeOwlBasicAuthApi', options);
+	console.log(JSON.stringify(res, null, 2));
+	return res;
+
 }
 
 
 
 export async function getKnowledgeBases(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
-	console.log("in get kbs");
 	const endpoint = '/project.json';
 	const responseData = await knowledgeOwlApiRequest.call(this, 'GET', endpoint, {});
 	const returnData: INodePropertyOptions[] = [];
 
 	for (const knowledgeBaseData of responseData.data) {
-		console.log(knowledgeBaseData);
 		returnData.push({
 			name: knowledgeBaseData.name,
 			value: knowledgeBaseData.id,
@@ -56,7 +57,6 @@ export async function getKnowledgeBases(this: ILoadOptionsFunctions): Promise<IN
 		}
 		return 0;
 	});
-	console.log(returnData);
 
 	return returnData;
 }
